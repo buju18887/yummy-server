@@ -42,8 +42,9 @@ app.use(
   });
 
   //routes
+app.use('/homepage', require('./routes/homepage'))
 app.use('/users', require('./routes/users'));
-
+app.use('/dashboard', require('./routes/dashboard'));
 
 const PORT = process.env.PORT || 5300;
 

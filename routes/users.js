@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt')
 
 // Load User model
 const {User} = require('../database/database');
-const { forwardAuthenticated } = require('../configs/auth');
 
 // Login Page
 router.get('/login', (req, res) => res.render('login'));

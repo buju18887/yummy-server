@@ -9,13 +9,13 @@ const sequelize = new Sequelize('yummy', 'postgres', 'buju', {
 const {DataTypes} = Sequelize;
 
 const Recipes = sequelize.define('recipes', {
-    recipe_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     recipe_img: {
         type: DataTypes.BLOB,
         allowNull: false
+    },
+    recipe_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     description: {
         type: DataTypes.STRING,
@@ -30,6 +30,17 @@ const Recipes = sequelize.define('recipes', {
         return uncompressed.toString()
        }
     }, 
+    prep_time: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    cook_time: {
+        type: DataTypes.TIME,
+        allowNull: false 
+    },
+    servings: {
+        type: DataTypes.INTEGER
+    },
     instructions: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -43,16 +54,18 @@ const Recipes = sequelize.define('recipes', {
         return uncompressed.toString()
        } 
     },
-    prep_time: {
-        type: DataTypes.TIME,
-        allowNull: false
-    },
-    cook_time: {
-        type: DataTypes.TIME,
-        allowNull: false 
-    },
-    serving_number: {
-        type: DataTypes.INTEGER
+    ingredients: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        set(value) {
+        const compressed = zlib.deflateSync(value).toString('base64')
+        this.setDataValue('ingredients', compressed)
+       },
+        get() {
+        const value = this.getDataValue('ingredients');
+        const uncompressed = zlib.inflateSync(Buffer.from(value, 'base64'));
+        return uncompressed.toString()
+       } 
     },
     tools: {
         type: DataTypes.STRING,
@@ -117,7 +130,7 @@ const User = sequelize.define('users', {
 User.hasMany(Recipes);
 Recipes.belongsTo(User);
 
-sequelize.sync({alter: true}).then(() => {
+sequelize.sync({force: true}).then(() => {
    console.log('Joined successfully');
 }).catch((err) => {
    console.log(err);
