@@ -1,51 +1,37 @@
+const path = require('path')
 const express = require('express');
-const expressLayouts = require('express-ejs-layouts');
-const passport = require('passport');
-const flash = require('connect-flash');
-const session = require('express-session');
+const dotenv = require('dotenv').config()
+const port = process.env.PORT || 5300
+const connectDB = require('./config/db')
+const {errorHandler} = require('./middleware/errorMiddleware')
+const cors = require('cors')
+
+connectDB()
 
 const app = express();
 
-// Passport Config
-require('./configs/passport')(passport);
+app.use(cors({origin: 'http://localhost:3000'}))
 
-//ejs
-app.use(expressLayouts);
-app.set('view engine', 'ejs');
-
-//body parser
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
-
-//session
-app.use(
-    session({
-      secret: 'secret',
-      resave: true,
-      saveUninitialized: true
-    })
-  );
-  
-  // Passport 
-  app.use(passport.initialize());
-  app.use(passport.session());
-  
-  // flash
-  app.use(flash());
-  
-  // Global variables
-  app.use(function(req, res, next) {
-    res.locals.success_msg = req.flash('success_msg');
-    res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
-    next();
-  });
+app.use(express.urlencoded({extended: false}))
 
   //routes
-app.use('/homepage', require('./routes/homepage'))
-app.use('/users', require('./routes/users'));
-app.use('/dashboard', require('./routes/dashboard'));
+app.use('/api/v1/users', require('./routes/users'));
+app.use('/api/v1/recipe', require('./routes/recipe'))
 
-const PORT = process.env.PORT || 5300;
+//serve the frontend
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')))
 
-app.listen(PORT, console.log(`Server running on  ${PORT}`));
+  app.get('*', (req, res) => {
+    res.sendFile(
+      path.resolve(__dirname, '../', 'frontend', 'build', 'index.html')
+    )
+  })
+} else {
+  app.get('/', (req, res) => res.send('Please set to production'))
+}
+
+app.use(errorHandler)
+
+app.listen(port, console.log(`Server running on  ${port}`));
