@@ -9,5 +9,24 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "zlib": "^1.0.5"
-  }
+  },
+  "name": "yummy-server",
+  "description": "[![CircleCI](https://dl.circleci.com/status-badge/img/gh/buju18887/yummy-server/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/buju18887/yummy-server/tree/main)",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buju18887/yummy-server.git"
+  },
+  "author": "buju",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/buju18887/yummy-server/issues"
+  },
+  "homepage": "https://github.com/buju18887/yummy-server#readme"
 }
